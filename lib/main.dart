@@ -1,8 +1,7 @@
-import 'dart:async';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
-
-import 'data/data.dart';
-import 'models/TileModel.dart';
+import 'package:memory_game_flutter/play.dart';
+import 'package:velocity_x/velocity_x.dart';
 
 void main() => runApp(MyApp());
 
@@ -16,237 +15,108 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: Home(),
+      home: Welcome(),
     );
   }
 }
 
-class Home extends StatefulWidget {
-  @override
-  _HomeState createState() => _HomeState();
-}
-
-class _HomeState extends State<Home> {
-  List<TileModel> gridViewTiles = new List<TileModel>();
-  List<TileModel> questionPairs = new List<TileModel>();
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    reStart();
-  }
-
-  void reStart() {
-    myPairs = getPairs();
-    myPairs.shuffle();
-
-    gridViewTiles = myPairs;
-    Future.delayed(const Duration(seconds: 5), () {
-// Here you can write your code
-      setState(() {
-        print("2 seconds done");
-        // Here you can write your code for open new view
-        questionPairs = getQuestionPairs();
-        gridViewTiles = questionPairs;
-        selected = false;
-      });
-    });
-  }
-
+class Welcome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 50),
-          child: Column(
-            children: <Widget>[
-              SizedBox(
-                height: 40,
-              ),
-              points != 800
-                  ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          "$points/800",
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.w500),
-                        ),
-                        Text(
-                          "Points",
-                          textAlign: TextAlign.start,
-                          style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.w300),
-                        ),
-                      ],
-                    )
-                  : Container(),
-              SizedBox(
-                height: 20,
-              ),
-              points != 800
-                  ? GridView(
-                      shrinkWrap: true,
-                      //physics: ClampingScrollPhysics(),
-                      scrollDirection: Axis.vertical,
-                      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                          mainAxisSpacing: 0.0, maxCrossAxisExtent: 100.0),
-                      children: List.generate(gridViewTiles.length, (index) {
-                        return Tile(
-                          imagePathUrl:
-                              gridViewTiles[index].getImageAssetPath(),
-                          tileIndex: index,
-                          parent: this,
-                        );
-                      }),
-                    )
-                  : Container(
-                      child: Column(
-                      children: <Widget>[
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              points = 0;
-                              reStart();
-                            });
-                          },
-                          child: Container(
-                            height: 50,
-                            width: 200,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: Colors.blue,
-                              borderRadius: BorderRadius.circular(24),
-                            ),
-                            child: Text(
-                              "Replay",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            // TODO
-                          },
-                          child: Container(
-                            height: 50,
-                            width: 200,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.blue, width: 2),
-                              borderRadius: BorderRadius.circular(24),
-                            ),
-                            child: Text(
-                              "Rate Us",
-                              style: TextStyle(
-                                  color: Colors.blue,
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ))
-            ],
-          ),
-        ),
-      ),
-    );
+        backgroundColor: Colors.white,
+        body: Container(
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 80),
+            child: Center(
+              child: Column(children: <Widget>[
+                Container(
+                  child: Text(
+                    "Memory Game",
+                    style: GoogleFonts.indieFlower(
+                      textStyle: TextStyle(
+                          color: Colors.amber,
+                          fontSize: 40,
+                          fontWeight: FontWeight.w900),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height / 14,
+                ),
+                Container(
+                  height: 110,
+                  child: Image.asset('assets/question.png'),
+                ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height / 14,
+                ),
+                VxSwiper(
+                  enlargeCenterPage: true,
+                  scrollDirection: Axis.horizontal,
+                  items: [
+                    ImageWidget("parrot.png"),
+                    ImageWidget("horse.png"),
+                    ImageWidget("fox.png"),
+                    ImageWidget("monkey.png"),
+                    ImageWidget("panda.png"),
+                    ImageWidget("rabbit.png"),
+                    ImageWidget("zoo.png"),
+                    ImageWidget("hippo.png"),
+                  ],
+                  height: 110,
+                  autoPlay: true,
+                  autoPlayAnimationDuration: 1.seconds,
+                  autoPlayInterval: 2.seconds,
+                  // autoPlay: true,
+                  // autoPlayAnimationDuration: 1.seconds,
+                ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height / 14,
+                ),
+                Container(
+                  height: 110,
+                  child: Image.asset('assets/correct.png'),
+                ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height / 12,
+                ),
+                Spacer(),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) => Home()));
+                  },
+                  child: Container(
+                    height: 60,
+                    width: 200,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Colors.blue,
+                      borderRadius: BorderRadius.circular(34),
+                    ),
+                    child: Text(
+                      "Play",
+                      style: GoogleFonts.indieFlower(
+                        textStyle: TextStyle(
+                            color: Colors.white,
+                            fontSize: 34,
+                            fontWeight: FontWeight.w900),
+                      ),
+                    ),
+                  ),
+                  // SizedBox(height: 140),
+                  // Container(
+                  //   child: Image.asset('assets/img2.jpg'),
+                  // ),
+                )
+              ]),
+            )));
   }
 }
 
-class Tile extends StatefulWidget {
-  String imagePathUrl;
-  int tileIndex;
-  _HomeState parent;
-
-  Tile({this.imagePathUrl, this.tileIndex, this.parent});
-
-  @override
-  _TileState createState() => _TileState();
-}
-
-class _TileState extends State<Tile> {
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        if (!selected) {
-          setState(() {
-            myPairs[widget.tileIndex].setIsSelected(true);
-          });
-          if (selectedTile != "") {
-            /// testing if the selected tiles are same
-            if (selectedTile == myPairs[widget.tileIndex].getImageAssetPath()) {
-              print("add point");
-              points = points + 100;
-              print(selectedTile + " thishis" + widget.imagePathUrl);
-
-              TileModel tileModel = new TileModel();
-              print(widget.tileIndex);
-              selected = true;
-              Future.delayed(const Duration(seconds: 2), () {
-                tileModel.setImageAssetPath("");
-                myPairs[widget.tileIndex] = tileModel;
-                print(selectedIndex);
-                myPairs[selectedIndex] = tileModel;
-                this.widget.parent.setState(() {});
-                setState(() {
-                  selected = false;
-                });
-                selectedTile = "";
-              });
-            } else {
-              print(selectedTile +
-                  " thishis " +
-                  myPairs[widget.tileIndex].getImageAssetPath());
-              print("wrong choice");
-              print(widget.tileIndex);
-              print(selectedIndex);
-              selected = true;
-              Future.delayed(const Duration(seconds: 2), () {
-                this.widget.parent.setState(() {
-                  myPairs[widget.tileIndex].setIsSelected(false);
-                  myPairs[selectedIndex].setIsSelected(false);
-                });
-                setState(() {
-                  selected = false;
-                });
-              });
-
-              selectedTile = "";
-            }
-          } else {
-            setState(() {
-              selectedTile = myPairs[widget.tileIndex].getImageAssetPath();
-              selectedIndex = widget.tileIndex;
-            });
-
-            print(selectedTile);
-            print(selectedIndex);
-          }
-        }
-      },
-      child: Container(
-        margin: EdgeInsets.all(5),
-        child: myPairs[widget.tileIndex].getImageAssetPath() != ""
-            ? Image.asset(myPairs[widget.tileIndex].getIsSelected()
-                ? myPairs[widget.tileIndex].getImageAssetPath()
-                : widget.imagePathUrl)
-            : Container(
-                color: Colors.white,
-                child: Image.asset("assets/correct.png"),
-              ),
-      ),
-    );
-  }
+Widget ImageWidget(String imgname) {
+  return Container(
+    height: 110,
+    child: Image.asset('assets/$imgname'),
+  );
 }
